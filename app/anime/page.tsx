@@ -7,11 +7,6 @@ import CardGrid from '@/components/common/CardGrid';
 import AnimeCard from '@/components/anime/AnimeCard';
 import { useToast } from '@/components/common/Toast';
 
-export const metadata = {
-  title: 'Anime Explorer | Alya & Marin Hub',
-  description: 'Explora y descubre animes con filtros y recomendaciones.',
-};
-
 type AniListMedia = {
   id: number;
   title: { romaji?: string; english?: string; native?: string };

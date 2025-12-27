@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Calendar, BookOpen, Users, Star, Plus, Loader2 } from 'lucide-react';
-import Link from 'next/link';
 import { useToast } from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useMangaList } from '@/hooks/useMangaList';
-import AddMangaModal from '@/components/manga/AddMangaModal';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const AddMangaModal = dynamic(() => import('@/components/manga/AddMangaModal'), { ssr: false });
 
 type MangaDetail = {
   id: number;

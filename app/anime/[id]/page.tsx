@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Calendar, Play, Users, Star, Plus, Loader2 } from 'lucide-react';
-import Link from 'next/link';
 import { useToast } from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnimeList } from '@/hooks/useAnimeList';
-import AddAnimeModal from '@/components/anime/AddAnimeModal';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const AddAnimeModal = dynamic(() => import('@/components/anime/AddAnimeModal'), { ssr: false });
 
 type AnimeDetail = {
   id: number;
