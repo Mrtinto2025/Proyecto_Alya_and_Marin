@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { User, Mail, Lock, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/components/common/Toast';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register } = useAuth();
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,32 +22,25 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     // Validar contraseñas
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+        showToast('Las contraseñas no coinciden', 'error');
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Error al registrar usuario');
-      } else {
-        // Redirigir al login
-        router.push('/login?registered=true');
-      }
+        const result = await register(formData.username, formData.email, formData.password);
+      
+        if (result.success) {
+          showToast('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión', 'success');
+          router.push('/login');
+        } else {
+          showToast(result.error || 'Error al registrar usuario', 'error');
+        }
     } catch (error) {
-      setError('Error al registrar usuario. Intenta de nuevo.');
+        showToast('Error al registrar usuario. Intenta de nuevo.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -70,14 +66,6 @@ export default function RegisterPage() {
               Únete a la comunidad de Alya & Marin
             </p>
           </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center space-x-2 text-red-600 dark:text-red-400">
-              <AlertCircle size={20} />
-              <span className="text-sm">{error}</span>
-            </div>
-          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">

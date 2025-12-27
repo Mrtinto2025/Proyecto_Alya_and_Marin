@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/components/common/Toast';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,23 +20,18 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     try {
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError('Email o contraseña incorrectos');
-      } else {
-        router.push('/');
-        router.refresh();
-      }
+        const result = await login(formData.email, formData.password);
+      
+        if (result.success) {
+          showToast('¡Bienvenido de nuevo!', 'success');
+          router.push('/dashboard');
+        } else {
+          showToast(result.error || 'Email o contraseña incorrectos', 'error');
+        }
     } catch (error) {
-      setError('Error al iniciar sesión. Intenta de nuevo.');
+        showToast('Error al iniciar sesión. Intenta de nuevo.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -51,14 +48,6 @@ export default function LoginPage() {
               Inicia sesión para continuar
             </p>
           </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center space-x-2 text-red-600 dark:text-red-400">
-              <AlertCircle size={20} />
-              <span className="text-sm">{error}</span>
-            </div>
-          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
