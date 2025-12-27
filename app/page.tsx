@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Sparkles, Search, BookOpen, Users, Image } from 'lucide-react';
+import NextImage from 'next/image';
+import { Sparkles, Search, BookOpen, Users, Image as ImageIcon } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -43,17 +44,20 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right side - Mascot placeholder */}
+            {/* Right side - Hero image */}
             <div className="relative animate-float hidden md:block">
-              <div className="relative h-96 bg-gradient-to-br from-primary-200 to-secondary-200 dark:from-primary-800 dark:to-secondary-800 rounded-3xl shadow-2xl flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="text-6xl">🌸</div>
-                  <p className="text-2xl font-bold text-gray-700 dark:text-gray-300">
-                    Alya & Marin
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Tus mascotas del hub
-                  </p>
+              <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+                <NextImage
+                  src="/images/gallery/alya-marin-playa.jpg"
+                  alt="Alya y Marin"
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/30" />
+                <div className="absolute bottom-4 right-4 bg-white/80 dark:bg-gray-900/70 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Alya & Marin
                 </div>
               </div>
             </div>
@@ -112,7 +116,7 @@ export default function HomePage() {
             {/* Feature 4 */}
             <div className="glass-effect p-6 rounded-2xl card-hover">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-                <Image className="text-white" size={24} />
+                <ImageIcon className="text-white" size={24} />
               </div>
               <h3 className="text-xl font-bold mb-2">Fan Art</h3>
               <p className="text-gray-600 dark:text-gray-400">

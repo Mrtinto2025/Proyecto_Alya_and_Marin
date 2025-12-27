@@ -37,12 +37,24 @@ async function fetchAniList<T>(query: string, variables: AniListVariables): Prom
 // ================= Anime =================
 
 export async function searchAnime(params: {
-  query: string;
+  query?: string;
   page?: number;
   perPage?: number;
+  genre?: string;
+  status?: 'RELEASING' | 'FINISHED' | 'NOT_YET_RELEASED' | 'CANCELLED' | 'HIATUS';
+  seasonYear?: number;
+  sort?: 'POPULARITY_DESC' | 'SCORE_DESC' | 'START_DATE_DESC';
 }) {
   const query = `
-    query ($query: String, $page: Int, $perPage: Int) {
+    query (
+      $query: String,
+      $page: Int,
+      $perPage: Int,
+      $genreIn: [String],
+      $status: MediaStatus,
+      $seasonYear: Int,
+      $sort: [MediaSort]
+    ) {
       Page(page: $page, perPage: $perPage) {
         pageInfo {
           total
@@ -50,7 +62,14 @@ export async function searchAnime(params: {
           lastPage
           hasNextPage
         }
-        media(search: $query, type: ANIME, sort: POPULARITY_DESC) {
+        media(
+          search: $query,
+          type: ANIME,
+          genre_in: $genreIn,
+          status: $status,
+          seasonYear: $seasonYear,
+          sort: $sort
+        ) {
           id
           title {
             romaji
@@ -82,6 +101,10 @@ export async function searchAnime(params: {
     query: params.query,
     page: params.page || 1,
     perPage: params.perPage || 10,
+    genreIn: params.genre ? [params.genre] : undefined,
+    status: params.status,
+    seasonYear: params.seasonYear,
+    sort: params.sort ? [params.sort] : ['POPULARITY_DESC'],
   });
 }
 
@@ -136,12 +159,24 @@ export async function getAnimeDetails(id: number) {
 // ================= Manga =================
 
 export async function searchManga(params: {
-  query: string;
+  query?: string;
   page?: number;
   perPage?: number;
+  genre?: string;
+  status?: 'RELEASING' | 'FINISHED' | 'NOT_YET_RELEASED' | 'CANCELLED' | 'HIATUS';
+  seasonYear?: number;
+  sort?: 'POPULARITY_DESC' | 'SCORE_DESC' | 'START_DATE_DESC';
 }) {
   const query = `
-    query ($query: String, $page: Int, $perPage: Int) {
+    query (
+      $query: String,
+      $page: Int,
+      $perPage: Int,
+      $genreIn: [String],
+      $status: MediaStatus,
+      $seasonYear: Int,
+      $sort: [MediaSort]
+    ) {
       Page(page: $page, perPage: $perPage) {
         pageInfo {
           total
@@ -149,7 +184,14 @@ export async function searchManga(params: {
           lastPage
           hasNextPage
         }
-        media(search: $query, type: MANGA, sort: POPULARITY_DESC) {
+        media(
+          search: $query,
+          type: MANGA,
+          genre_in: $genreIn,
+          status: $status,
+          seasonYear: $seasonYear,
+          sort: $sort
+        ) {
           id
           title {
             romaji
@@ -182,6 +224,10 @@ export async function searchManga(params: {
     query: params.query,
     page: params.page || 1,
     perPage: params.perPage || 10,
+    genreIn: params.genre ? [params.genre] : undefined,
+    status: params.status,
+    seasonYear: params.seasonYear,
+    sort: params.sort ? [params.sort] : ['POPULARITY_DESC'],
   });
 }
 

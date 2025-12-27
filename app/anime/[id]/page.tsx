@@ -6,8 +6,10 @@ import { ArrowLeft, Calendar, Play, Users, Star, Plus, Loader2 } from 'lucide-re
 import { useToast } from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnimeList } from '@/hooks/useAnimeList';
+import { useTranslation } from '@/hooks/useTranslation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import StreamingLinks from '@/components/anime/StreamingLinks';
 
 const AddAnimeModal = dynamic(() => import('@/components/anime/AddAnimeModal'), { ssr: false });
 
@@ -46,6 +48,9 @@ export default function AnimeDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isInList, setIsInList] = useState(false);
+  const { translatedText: translatedDescription, isTranslating } = useTranslation(
+    anime?.description || ''
+  );
 
   const id = params.id as string;
 
@@ -217,10 +222,20 @@ export default function AnimeDetailPage() {
           {/* Descripción */}
           {anime.description && (
             <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold mb-4">Sinopsis</h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{anime.description}</p>
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                Sinopsis
+                {isTranslating && <Loader2 className="animate-spin" size={20} />}
+              </h2>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {translatedDescription || anime.description}
+              </p>
             </div>
           )}
+
+          {/* Plataformas de Streaming */}
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <StreamingLinks animeTitle={title} animeId={anime.id} />
+          </div>
 
           {/* Personajes */}
           {characters.length > 0 && (

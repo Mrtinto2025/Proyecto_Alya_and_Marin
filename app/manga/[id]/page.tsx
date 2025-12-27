@@ -6,8 +6,10 @@ import { ArrowLeft, Calendar, BookOpen, Users, Star, Plus, Loader2 } from 'lucid
 import { useToast } from '@/components/common/Toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useMangaList } from '@/hooks/useMangaList';
+import { useTranslation } from '@/hooks/useTranslation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import MangaReadingLinks from '@/components/manga/MangaReadingLinks';
 
 const AddMangaModal = dynamic(() => import('@/components/manga/AddMangaModal'), { ssr: false });
 
@@ -46,6 +48,9 @@ export default function MangaDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isInList, setIsInList] = useState(false);
+  const { translatedText: translatedDescription, isTranslating } = useTranslation(
+    manga?.description || ''
+  );
 
   const id = params.id as string;
 
@@ -218,10 +223,20 @@ export default function MangaDetailPage() {
           {/* Descripción */}
           {manga.description && (
             <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold mb-4">Sinopsis</h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{manga.description}</p>
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                Sinopsis
+                {isTranslating && <Loader2 className="animate-spin" size={20} />}
+              </h2>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {translatedDescription || manga.description}
+              </p>
             </div>
           )}
+
+          {/* Plataformas de Lectura */}
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <MangaReadingLinks mangaTitle={title} mangaId={manga.id} />
+          </div>
 
           {/* Personajes */}
           {characters.length > 0 && (
